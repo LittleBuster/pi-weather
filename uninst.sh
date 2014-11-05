@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd dht22_driver
+cd DHT_Driver 
 make remove
 cd ..

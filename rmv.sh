@@ -1,5 +1,8 @@
 #!/bin/bash
 
-cd dht22_driver
+cd DHT_Driver
+make clean
+cd ..
+cd weather
 make clean
 cd ..
