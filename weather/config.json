@@ -1,17 +1,38 @@
 [
 	{
 		"Sensors": {
-			"interval": 2,
-			"DHT_PIN": 4
+			"interval": 300,
+			"DHT_PIN": 4,
+			"DHT_PIN2": 23,
+			"HYDRO_PIN": 18
 		}
 	},
 
 	{
 		"MariaDB": {
-			"ip": "11111",
-			"user": "",
+			"ip": "178.***********",
+			"user": "*****",
+			"passwd": "*****",
+			"base": "weather"
+		}
+	},
+
+	{
+		"SMS": {
+			"user": "**********@gmail.com",
 			"passwd": "",
-			"base": ""
+			"to": "8913********",
+			"from": "INFORM"
+		}
+	},
+
+	{
+		"Mail": {
+			"api-key": "9f6ca521e3*******************d5",
+			"from": "Meteo Station",
+			"to": "*********@gmail.com",
+			"to2": "",
+			"subject": "Test Meteo"
 		}
 	}
 ]
