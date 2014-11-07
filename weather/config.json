@@ -1,0 +1,17 @@
+[
+	{
+		"Sensors": {
+			"interval": 2,
+			"DHT_PIN": 4
+		}
+	},
+
+	{
+		"MariaDB": {
+			"ip": "11111",
+			"user": "",
+			"passwd": "",
+			"base": ""
+		}
+	}
+]

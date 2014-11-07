@@ -1,8 +1,10 @@
-all:
-	g++ -Wall -O3 -c weather_checker.cpp -lboost_system -ldht_driver -std=c++11 -ldht_driver
-	g++ -Wall -O3 -c weather.cpp -lboost_system -lboost_thread -std=c++11
-	g++ -Wall -O3 weather.o weather_checker.o -o weather -lboost_system -lboost_thread -lpthread -ldht_driver -std=c++11
+all: weather
+
+weather: main.o
+	gcc main.o -o weather -ljansson -lpthread -ldht_driver
+
+main.o: main.c
+	gcc -c main.c
 
 clean:
-	rm -rf *.o
-	rm -rf weather
+	rm *.o weather

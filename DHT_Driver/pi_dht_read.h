@@ -37,7 +37,7 @@ typedef struct _temp_hum {
 	float humidity;
 } TempHum;
 
-int pi_dht_read( int type, int pin, TempHum *th );
+extern int pi_dht_read( int type, int pin, TempHum *th );
 
 #ifdef __cplusplus
 }
