@@ -154,6 +154,7 @@ void* thread_func( void *arg ) {
 	while (1) {
 		//check temp & hum
 		TempHum th, th2;	
+
 		pi_dht_read( DHT22, cfg->DHT_PIN, &th );
 		pi_dht_read( DHT22, cfg->DHT2_PIN, &th2 );
 

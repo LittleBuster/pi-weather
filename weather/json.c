@@ -52,7 +52,7 @@ int json_parse_file( const char *filename, Configs *cfg ) {
 			sensors = json_object_get(data, "Sensors");
 			_interval = json_object_get(sensors, "interval");
 			_pin = json_object_get(sensors, "DHT_PIN");
-			_pin2 = json_object_get(sensors, "DHT2_PIN");
+			_pin2 = json_object_get(sensors, "DHT_PIN2");
 			_pin3 = json_object_get(sensors, "HYDRO_PIN");
 			cfg->interval = json_integer_value(_interval);
 			cfg->DHT_PIN = json_integer_value(_pin);
