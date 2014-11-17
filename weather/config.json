@@ -4,56 +4,34 @@
 			"interval": 300,
 			"DHT_PIN": 4,
 			"DHT_PIN2": 23,
-<<<<<<< HEAD
-			"DHT_PIN3": 24,
-=======
->>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
+			"DHT_PIN3": 23,
 			"HYDRO_PIN": 18
 		}
 	},
 
 	{
 		"MariaDB": {
-<<<<<<< HEAD
-			"ip": "178.62.******",
+			"ip": "178.*********",
 			"user": "********",
-			"passwd": "********",
+			"passwd": "*********",
 			"base": "meteo"
-=======
-			"ip": "178.***********",
-			"user": "*****",
-			"passwd": "*****",
-			"base": "weather"
->>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
 		}
 	},
 
 	{
 		"SMS": {
-<<<<<<< HEAD
-			"user": "************@gmail.com",
+			"user": "**************@gmail.com",
 			"passwd": "",
-			"to": "891372**********",
-=======
-			"user": "**********@gmail.com",
-			"passwd": "",
-			"to": "8913********",
->>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
+			"to": "8913************",
 			"from": "INFORM"
 		}
 	},
 
 	{
 		"Mail": {
-<<<<<<< HEAD
-			"api-key": "9f6ca521e3f444b*******************",
+			"api-key": "9f6ca521e3f****************",
 			"from": "Meteo Station",
-			"to": "**************@gmail.com",
-=======
-			"api-key": "9f6ca521e3*******************d5",
-			"from": "Meteo Station",
-			"to": "*********@gmail.com",
->>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
+			"to": "**********@gmail.com",
 			"to2": "",
 			"subject": "Test Meteo"
 		}
