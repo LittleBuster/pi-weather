@@ -33,6 +33,10 @@ typedef struct _configs {
         int interval;
         int DHT_PIN;
         int DHT2_PIN;
+<<<<<<< HEAD
+        int DHT3_PIN;
+=======
+>>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
         int HYDRO_PIN;
 
         char mysql_ip[100];

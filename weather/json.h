@@ -1,5 +1,9 @@
 // weather ap is used for reading temperature and humidity from dht22 sensor
+<<<<<<< HEAD
+// on raspberry pi B version with Raspbian OS and add to database.
+=======
 // on raspberry pi B version with Pidora OS and add to database.
+>>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
 //
 // Copyright © 20012-2014 by Sergey Denisov aka 'LittleBuster'
 // E-Mail: DenisovS21 at gmail dor com (DenisovS21@gmail.com)

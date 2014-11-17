@@ -1,5 +1,9 @@
 // weather ap is used for reading temperature and humidity from dht22 sensor
+<<<<<<< HEAD
+// on raspberry pi B version with Raspbian OS and add to database.
+=======
 // on raspberry pi B version with Pidora OS and add to database.
+>>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
 //
 // Copyright © 20012-2014 by Sergey Denisov aka 'LittleBuster', Dom and Gert
 // E-Mail: DenisovS21 at gmail dor com (DenisovS21@gmail.com)
@@ -45,7 +49,11 @@ int json_parse_file( const char *filename, Configs *cfg ) {
 		switch (i) 
 		{
 		case 0: {
+<<<<<<< HEAD
+			json_t *data, *sensors, *_interval, *_pin, *_pin2, *_pin3, *_pin2_3;
+=======
 			json_t *data, *sensors, *_interval, *_pin, *_pin2, *_pin3;
+>>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
 
 			data = json_array_get(root, i);
 
@@ -53,10 +61,18 @@ int json_parse_file( const char *filename, Configs *cfg ) {
 			_interval = json_object_get(sensors, "interval");
 			_pin = json_object_get(sensors, "DHT_PIN");
 			_pin2 = json_object_get(sensors, "DHT_PIN2");
+<<<<<<< HEAD
+			_pin2_3 = json_object_get(sensors, "DHT_PIN3");
+=======
+>>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
 			_pin3 = json_object_get(sensors, "HYDRO_PIN");
 			cfg->interval = json_integer_value(_interval);
 			cfg->DHT_PIN = json_integer_value(_pin);
 			cfg->DHT2_PIN = json_integer_value(_pin2);
+<<<<<<< HEAD
+			cfg->DHT3_PIN = json_integer_value(_pin2_3);
+=======
+>>>>>>> fee1b64815938f977f0ab2f05ef25a055d5d5d4b
 			cfg->HYDRO_PIN = json_integer_value(_pin3);
 			free(data);
 		} break;
