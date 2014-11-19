@@ -27,6 +27,7 @@
 #include <time.h>
 #include <pi_dht_read.h>
 #include "json.h"
+#include "log.h"
 
 int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	char _date[100];
@@ -193,7 +194,7 @@ void* thread_func( void *arg ) {
 			send_sms_aero("Обнаружена+вода", cfg);
 			send_mail("Обнаружена вода!", cfg);
 			puts("Обнаружена вода!");
-		}		
+		}
 
 		if ((lev == 1) && (WATER == 1)) {
 			WATER = 0;
@@ -209,6 +210,8 @@ void* thread_func( void *arg ) {
 			pi_dht_read( DHT22, cfg->DHT3_PIN, &th3 );
 		}
 
+		bcm2835_delay(2000);
+
 		res = pi_dht_read( DHT22, cfg->DHT_PIN, &th );
 		if (res == 0) {
 			printf("Temperature #1 is:%.1f Humidity is:%d\n", th.temperature, (int)th.humidity );
@@ -218,7 +221,10 @@ void* thread_func( void *arg ) {
 			send_to_db(&req, cfg, 0);			
 		} else {
 			puts("Sensor #1 - Not found");
+			log("DHT Sensor #1 - Not found", LOG_ERROR);
 		}
+
+		bcm2835_delay(2000);
 
 		res = pi_dht_read( DHT22, cfg->DHT2_PIN, &th2 );
 		if (res == 0) {
@@ -229,7 +235,10 @@ void* thread_func( void *arg ) {
 			send_to_db(&req, cfg, 1);
 		} else {
 			puts("Sensor #2 - Not found");
+			log("DHT Sensor #2 - Not found", LOG_ERROR);
 		}
+
+		bcm2835_delay(2000);
 
 		res = pi_dht_read( DHT22, cfg->DHT3_PIN, &th3 );
 		if (res == 0) {
@@ -258,6 +267,6 @@ int main( int argc, char *argv[] ) {
 	pthread_detach(th);
 	
 	while(1) {
-		sleep(10);
+		bcm2835_delay(60000);
 	}
 }
