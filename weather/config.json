@@ -20,6 +20,7 @@
 
 	{
 		"SMS": {
+			"enable": "false",
 			"user": "**************@gmail.com",
 			"passwd": "",
 			"to": "8913************",

@@ -53,6 +53,8 @@ void log( const char *message, int type ) {
 	}
 
 	strcat(out, message);
+	strcat(out, "\n");
+	fwrite(out, strlen(out), 1, f);
 
 	fclose(f);
 }

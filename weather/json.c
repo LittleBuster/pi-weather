@@ -81,16 +81,18 @@ int json_parse_file( const char *filename, Configs *cfg ) {
 		} break;
 
 		case 2: {
-			json_t *data, *sms, *_user, *_passwd, *_to, *_from;
+			json_t *data, *sms, *_user, *_passwd, *_to, *_from, *_en;
 
 			data = json_array_get(root, i);
 
 			sms = json_object_get(data, "SMS");
+			_en = json_object_get(sms, "enable");
 			_user = json_object_get(sms, "user");
 			_passwd = json_object_get(sms, "passwd");
 			_to = json_object_get(sms, "to");
 			_from = json_object_get(sms, "from");
 			
+			strcpy(cfg->sms_enable, json_string_value(_en));
 			strcpy(cfg->sms_user, json_string_value(_user));
 			strcpy(cfg->sms_passwd, json_string_value(_passwd));
 			strcpy(cfg->sms_to, json_string_value(_to));

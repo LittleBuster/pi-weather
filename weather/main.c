@@ -29,6 +29,8 @@
 #include "json.h"
 #include "log.h"
 
+#define SENSORS_COUNT 3
+
 int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	char _date[100];
 	char _time[100];
@@ -67,7 +69,7 @@ int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	sprintf(_hydro, "%d", (int)req->hydro);
 	
  	//creqte query
-	if (index == 2) {
+	if (index == 3) {
 		strcpy(q, "INSERT INTO meteo_water0(water, date) VALUES('");
 		strcat(q, _hydro);
 		strcat(q, "','");
@@ -96,7 +98,7 @@ int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 			break;
 		}
 
-		case 3: {
+		case 2: {
 			strcpy(q, "INSERT INTO meteo_temp2(temp, hum, date) VALUES('");
 			break;
 		}
@@ -177,13 +179,14 @@ void* thread_func( void *arg ) {
 	int WATER = 0;
 	unsigned isFirst = 1;
 	int res = 0;
+	int count;
 
 	//listen hydro sensor
 	bcm2835_gpio_fsel(cfg->HYDRO_PIN, BCM2835_GPIO_FSEL_INPT);
 	
 	while (1) {
 		//check temp & hum
-		TempHum th, th2, th3;
+		TempHum th;
 		DB_Req req;
 
 		//Read water			
@@ -191,7 +194,9 @@ void* thread_func( void *arg ) {
 
 		if ((lev == 0) && (WATER == 0)) {
 			WATER = 1;
-			send_sms_aero("Обнаружена+вода", cfg);
+			if (!strcmp(cfg->sms_enable, "true")) {
+				send_sms_aero("Обнаружена+вода", cfg);
+			}
 			send_mail("Обнаружена вода!", cfg);
 			puts("Обнаружена вода!");
 		}
@@ -200,57 +205,71 @@ void* thread_func( void *arg ) {
 			WATER = 0;
 		}
 		req.hydro = WATER;
-		send_to_db(&req, cfg, 2);	
+		send_to_db(&req, cfg, 3);	
 		
 		//Reading temperature and gumidity
 		if (isFirst) {
 			isFirst = 0;
 			pi_dht_read( DHT22, cfg->DHT_PIN, &th );
-			pi_dht_read( DHT22, cfg->DHT2_PIN, &th2 );
-			pi_dht_read( DHT22, cfg->DHT3_PIN, &th3 );
+			pi_dht_read( DHT22, cfg->DHT2_PIN, &th );
+			pi_dht_read( DHT22, cfg->DHT3_PIN, &th );
 		}
 
-		bcm2835_delay(2000);
+		for (unsigned i = 0; i < SENSORS_COUNT; i++) {
+			//Check sensor while not return res
+			count = 30;						
+			
+			while (1) {
+				th.humidity = 0.0f;
+				th.temperature = 0.0f;
 
-		res = pi_dht_read( DHT22, cfg->DHT_PIN, &th );
-		if (res == 0) {
-			printf("Temperature #1 is:%.1f Humidity is:%d\n", th.temperature, (int)th.humidity );
-			req.temp = th.temperature;
-			req.hum = (int)th.humidity;
-			//Send to database	
-			send_to_db(&req, cfg, 0);			
-		} else {
-			puts("Sensor #1 - Not found");
-			log("DHT Sensor #1 - Not found", LOG_ERROR);
+				switch (i) {
+					case 0: {
+						res = pi_dht_read( DHT22, cfg->DHT_PIN, &th );
+						break;
+					}
+
+					case 1: {
+						res = pi_dht_read( DHT22, cfg->DHT2_PIN, &th );
+						break;
+					}
+
+					case 2: {
+						res = pi_dht_read( DHT22, cfg->DHT3_PIN, &th );
+						break;
+					}
+				}				
+
+				if (res == 0) {
+					break;
+				}
+
+				count--;
+				if (count == 0) {
+					break;
+				}
+				bcm2835_delay(200);
+			}
+
+			if (res == 0) {
+				printf("Temperature #%d is:%.1f Humidity is:%d\n", i, th.temperature, (int)th.humidity );
+				req.temp = th.temperature;
+				req.hum = (int)th.humidity;
+				//Send to database	
+				send_to_db(&req, cfg, i);			
+			} else {
+				printf("Sensor #%d - Not found\n", i);
+
+				char logs[150];
+				char num[10];
+
+				sprintf(num, "%d", i);
+				strcpy(logs, "DHT Sensor #");
+				strcat(logs, num);
+				strcat(logs, " - Not found.");
+				log(logs, LOG_ERROR);
+			}
 		}
-
-		bcm2835_delay(2000);
-
-		res = pi_dht_read( DHT22, cfg->DHT2_PIN, &th2 );
-		if (res == 0) {
-			printf("Temperature #2 is:%.1f Humidity is:%d\n", th2.temperature, (int)th2.humidity );
-			req.temp = th2.temperature;
-			req.hum = (int)th2.humidity;
-			//Send to database
-			send_to_db(&req, cfg, 1);
-		} else {
-			puts("Sensor #2 - Not found");
-			log("DHT Sensor #2 - Not found", LOG_ERROR);
-		}
-
-		bcm2835_delay(2000);
-
-		res = pi_dht_read( DHT22, cfg->DHT3_PIN, &th3 );
-		if (res == 0) {
-			printf("Temperature #3 is:%.1f Humidity is:%d\n", th3.temperature, (int)th3.humidity );
-			req.temp = th3.temperature;
-			req.hum = (int)th3.humidity;
-			//Send to database
-			send_to_db(&req, cfg, 3);
-		} else {
-			puts("Sensor #3 - Not found");
-		}
-		
 		//wait
 		sleep(cfg->interval);
 	}

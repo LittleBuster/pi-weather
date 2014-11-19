@@ -41,6 +41,7 @@ typedef struct _configs {
         char mysql_passwd[100];
         char mysql_base[100];
 
+        char sms_enable[20];
         char sms_user[100];
         char sms_passwd[100];
         char sms_to[100];
