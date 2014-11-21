@@ -1,7 +1,7 @@
 all: weather
 
 weather: main.o json.o log.o
-	gcc main.o log.o json.o -o weather -ljansson -lpthread -ldht_driver -lbcm2835 -lmysqlclient -O3 -Wall -std=gnu99
+	gcc main.o log.o json.o -o weather -ljansson -lpthread -ldht_driver -lbcm2835 -lpq -O3 -Wall -std=gnu99
 	strip weather
 
 main.o: main.c

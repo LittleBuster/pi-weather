@@ -68,7 +68,7 @@ int json_parse_file( const char *filename, Configs *cfg ) {
 
 			data = json_array_get(root, i);
 
-			db = json_object_get(data, "MariaDB");
+			db = json_object_get(data, "pqDB");
 			_ip = json_object_get(db, "ip");
 			_user = json_object_get(db, "user");
 			_passwd = json_object_get(db, "passwd");

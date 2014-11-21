@@ -22,6 +22,7 @@
 #include <pthread.h>
 #include <mysql/mysql.h>
 #include <bcm2835.h>
+#include <postgresql/libpq-fe.h>
 
 #include "configs.h"
 #include <time.h>
@@ -34,7 +35,7 @@
 int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	char _date[100];
 	char _time[100];
-	time_t t = time(NULL);		
+	time_t t = time(NULL);
 	struct tm * timeinfo;
 	char q[1024];
 	char _datetime[100];
@@ -42,11 +43,9 @@ int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	char _hum[10];
 	char _hydro[10];
 	char _ind[100];
-	
-	MYSQL mysql, *conn;
-	MYSQL_RES *res;
-	MYSQL_ROW rowa;
-	int query_state;
+	char conn_str[1024];
+	PGconn *conn;
+
 
 	timeinfo = localtime (&t);
 	strftime(_date, 100, "%F", timeinfo);
@@ -55,20 +54,30 @@ int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	strcat(_datetime, " ");
 	strcat(_datetime, _time);
 
-	mysql_init(&mysql);
-	conn = mysql_real_connect(&mysql, cfg->mysql_ip, cfg->mysql_user, cfg->mysql_passwd, cfg->mysql_base, 3306, NULL, 0);
-	if (conn == NULL) {
-		puts("Fail");
-		return 1;
+	strcpy(conn_str, "dbname=");
+	strcat(conn_str, cfg->mysql_base);
+	strcat(conn_str, " host=");
+	strcat(conn_str, cfg->mysql_ip);
+	strcat(conn_str, " user=");
+	strcat(conn_str, cfg->mysql_user);
+	strcat(conn_str, " password=");
+	strcat(conn_str, cfg->mysql_passwd);
+
+	conn = PQconnectdb( conn_str );
+	if (PQstatus(conn) == CONNECTION_BAD) {
+		log("Не удается подключиться к базе данных", LOG_ERROR);
+		puts("Не удается подключиться к базе данных");
+		return -1;
+	} else {
+		puts("Connected to database.");
 	}
-	puts("Connected to database.");
 
 	//convert to text
 	sprintf(_temp, "%.1f", req->temp);
 	sprintf(_hum, "%d", (int)req->hum);
 	sprintf(_hydro, "%d", (int)req->hydro);
 	
- 	//creqte query
+ 	//create query
 	if (index == 3) {
 		strcpy(q, "INSERT INTO meteo_water0(water, date) VALUES('");
 		strcat(q, _hydro);
@@ -76,15 +85,7 @@ int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 		strcat(q, _datetime);
 		strcat(q, "')");
 
-		query_state = mysql_query(conn, q);
-		if (query_state != 0) {
-			puts("DB Hydro: Fail insert!");
-         		mysql_close(&mysql);
-			return -1;
-		} else {
-			puts("DB Hydro: Data sended.");
-			return 0;
-		}
+		PQexec(conn, q);
 	}
 
 	switch (index) {
@@ -111,17 +112,9 @@ int send_to_db( const DB_Req *req, const Configs *cfg, int index ) {
 	strcat(q, _datetime);
 	strcat(q, "')");
 
-	query_state = mysql_query(conn, q);
-	if (query_state != 0)
-	{
-		printf("DB DHT%d: Fail insert!\n", index);
-		mysql_close(&mysql);
-		return -1;
-	} else {
-		printf("DB DHT%d: Data sended.\n", index);
-	}
+	PQexec(conn, q);
 
-	mysql_close(&mysql);
+	PQfinish(conn);
 	return 1;
 }
 
@@ -258,16 +251,19 @@ void* thread_func( void *arg ) {
 				//Send to database	
 				send_to_db(&req, cfg, i);			
 			} else {
-				printf("Sensor #%d - Not found\n", i);
+				
+				if (i != 2) {
+					printf("Sensor #%d - Not found\n", i);
 
-				char logs[150];
-				char num[10];
+					char logs[150];
+					char num[10];
 
-				sprintf(num, "%d", i);
-				strcpy(logs, "DHT Sensor #");
-				strcat(logs, num);
-				strcat(logs, " - Not found.");
-				log(logs, LOG_ERROR);
+					sprintf(num, "%d", i);
+					strcpy(logs, "DHT Sensor #");
+					strcat(logs, num);
+					strcat(logs, " - Not found.");
+					log(logs, LOG_ERROR);
+				}
 			}
 		}
 		//wait
